@@ -4,9 +4,13 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -25,6 +29,10 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	private JTextArea textarea;
 	
 	private JScrollPane vertical;
+	
+	private JMenu file;
+	
+	private JMenuItem menuItem;
 	
 	/**
 	 * Creates a new Editor GUI with the specified title
@@ -95,9 +103,36 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
+		this.getContentPane().add(addMenu());
 		this.getContentPane().add(addContent());
 		
 		this.setVisible(true);
+	}
+	
+	/**
+	 * Adds the menu bar which contains features such as saving and loading.
+	 * @return The menubar with all submenus
+	 */
+	public JMenuBar addMenu(){
+		JMenuBar bar = new JMenuBar();
+		
+		file = new JMenu("File");
+		file.setMnemonic(KeyEvent.VK_A);
+		file.getAccessibleContext().setAccessibleDescription("Save");
+		bar.add(file);
+		
+		menuItem = new JMenuItem("Save");
+		file.add(menuItem);
+		
+		menuItem = new JMenuItem("Load");
+		file.add(menuItem);
+		
+		file.addSeparator();
+		
+		menuItem = new JMenuItem("Close");
+		file.add(menuItem);
+		
+		return bar;
 	}
 	
 	/**
