@@ -1,9 +1,15 @@
 package gui;
 
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionListener{
 	private static final long serialVersionUID = -5259510942170843475L;
@@ -15,6 +21,10 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	private int width;
 	
 	private int height;
+	
+	private JTextArea textarea;
+	
+	private JScrollPane vertical;
 	
 	/**
 	 * Creates a new Editor GUI with the specified title
@@ -84,6 +94,33 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
+		this.getContentPane().add(addContent());
+		
 		this.setVisible(true);
+	}
+	
+	/**
+	 * Adds textarea and scrollpane when needed.
+	 * @return A JPanel that contains the needed content of that panel
+	 */
+	private JPanel addContent(){
+		JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		Dimension dim = new Dimension(this.getWidth(), this.getHeight());
+		panel.setPreferredSize(dim);
+		
+		textarea = new JTextArea();
+		textarea.setLineWrap( true );
+		textarea.setWrapStyleWord( true );
+		textarea.setSize(dim);
+		textarea.setEditable(true);
+		panel.add(textarea);
+		
+		vertical = new JScrollPane(textarea);
+		vertical.setPreferredSize(new Dimension(this.getWidth()-10, this.getHeight()-10));
+        vertical.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+		panel.add(vertical);
+		
+		return panel;
 	}
 }
