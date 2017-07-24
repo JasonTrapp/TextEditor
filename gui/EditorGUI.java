@@ -46,6 +46,8 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	
 	private JMenuItem menuItem;
 	
+	private String path;
+	
 	/**
 	 * Creates a new Editor GUI with the specified title
 	 * @param title The title of the GUI super class JFrame
@@ -86,6 +88,10 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	 */
 	public void setWidth(int width){
 		this.width = width;
+	}
+	
+	private void changeTitle(String filePath){
+		this.setTitle(filePath);
 	}
 
 	/**
@@ -156,6 +162,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 					FileWriter fw;
 					try {
 						fw = new FileWriter(fc.getSelectedFile());
+						File file = fc.getSelectedFile();
 						String text = textarea.getText();
 						fw.write(text);
 						fw.close();
@@ -192,6 +199,8 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 						FileReader reader = new FileReader(file.getAbsolutePath());
 						BufferedReader br = new BufferedReader(reader);		
 						String line = "";
+						path = file.getPath();
+						changeTitle(line);
 						while(br.ready()){
 							line = line.concat(br.readLine());	
 							line = line.concat("\n");
@@ -200,7 +209,6 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 						textarea.setText(line);
 						br.close();
 						reader.close();
-						
 					}catch(FileNotFoundException ex){
 						System.out.println("File not found");
 					} catch (IOException ex) {
