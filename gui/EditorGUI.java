@@ -25,8 +25,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 
-import java.util.*;
-
 public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionListener{
 	private static final long serialVersionUID = -5259510942170843475L;
 	
@@ -200,7 +198,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 						BufferedReader br = new BufferedReader(reader);		
 						String line = "";
 						path = file.getPath();
-						changeTitle(line);
+						changeTitle(path);
 						while(br.ready()){
 							line = line.concat(br.readLine());	
 							line = line.concat("\n");
