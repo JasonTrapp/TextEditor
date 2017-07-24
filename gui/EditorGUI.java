@@ -200,6 +200,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 						textarea.setText(line);
 						br.close();
 						reader.close();
+						
 					}catch(FileNotFoundException ex){
 						System.out.println("File not found");
 					} catch (IOException ex) {
