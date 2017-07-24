@@ -5,8 +5,16 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.File;
 
+import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -14,6 +22,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
+
+import java.util.*;
 
 public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionListener{
 	private static final long serialVersionUID = -5259510942170843475L;
@@ -121,15 +132,78 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 		file.getAccessibleContext().setAccessibleDescription("Save");
 		bar.add(file);
 		
-		menuItem = new JMenuItem("Save");
+		menuItem = new JMenuItem(new AbstractAction("New"){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				textarea.setText(null);
+			}
+		});
 		file.add(menuItem);
 		
-		menuItem = new JMenuItem("Load");
+		menuItem = new JMenuItem(new AbstractAction("Save"){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
 		file.add(menuItem);
 		
+		menuItem = new JMenuItem(new AbstractAction("Save as"){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		file.add(menuItem);
+		
+		menuItem = new JMenuItem(new AbstractAction("Load"){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				final JFrame frame = new JFrame();
+				int returnVal = fc.showOpenDialog(frame);
+				
+				if(returnVal == JFileChooser.APPROVE_OPTION){
+					File file = fc.getSelectedFile();
+					try{ 			
+						FileReader reader = new FileReader("");
+						BufferedReader br = new BufferedReader(reader);		
+						String line;
+						while(br.ready()){
+							line = br.readLine();
+							
+						}
+						
+						br.close();
+						reader.close();
+					}catch(FileNotFoundException ex){
+						System.out.println("File not found");
+					} catch (IOException ex) {
+						System.out.println("There was an error loading the file.");
+					}
+				}
+			}
+		});
+		file.add(menuItem);
 		file.addSeparator();
 		
-		menuItem = new JMenuItem("Close");
+		menuItem = new JMenuItem(new AbstractAction("Close"){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setVisible(false);
+				dispose();
+			}
+		});
 		file.add(menuItem);
 		
 		return bar;
