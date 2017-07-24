@@ -174,14 +174,15 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 				if(returnVal == JFileChooser.APPROVE_OPTION){
 					File file = fc.getSelectedFile();
 					try{ 			
-						FileReader reader = new FileReader("");
+						FileReader reader = new FileReader(file.getAbsolutePath());
 						BufferedReader br = new BufferedReader(reader);		
-						String line;
+						String line = "";
 						while(br.ready()){
-							line = br.readLine();
-							
+							line = line.concat(br.readLine());	
+							line = line.concat("\n");
 						}
 						
+						textarea.setText(line);
 						br.close();
 						reader.close();
 					}catch(FileNotFoundException ex){
