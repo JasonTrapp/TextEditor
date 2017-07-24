@@ -9,6 +9,7 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.File;
 
@@ -147,7 +148,21 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser();
+				final JFrame frame = new JFrame();
+				int returnVal = fc.showSaveDialog(frame);
 				
+				if(returnVal == JFileChooser.APPROVE_OPTION){
+					FileWriter fw;
+					try {
+						fw = new FileWriter(fc.getSelectedFile());
+						String text = textarea.getText();
+						fw.write(text);
+						fw.close();
+					} catch (IOException e1) {
+						System.out.println("Cannot write file.");
+					}
+				}
 			}
 		});
 		file.add(menuItem);
@@ -227,7 +242,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 		panel.add(textarea);
 		
 		vertical = new JScrollPane(textarea);
-		vertical.setPreferredSize(new Dimension(this.getWidth()-10, this.getHeight()-10));
+		vertical.setPreferredSize(new Dimension(this.getWidth()-10, this.getHeight()-30));
         vertical.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		panel.add(vertical);
 		
