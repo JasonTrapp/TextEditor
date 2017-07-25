@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.io.File;
 
 import javax.swing.AbstractAction;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -39,9 +41,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	private JTextArea textarea;
 	
 	private JScrollPane vertical;
-	
-	private JMenu file;
-	
+		
 	private JMenuItem menuItem;
 	
 	private String path;
@@ -131,12 +131,8 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	 */
 	public JMenuBar addMenu(){
 		JMenuBar bar = new JMenuBar();
-		
-		file = new JMenu("File");
-		file.setMnemonic(KeyEvent.VK_A);
-		file.getAccessibleContext().setAccessibleDescription("Save");
-		bar.add(file);
-		
+		bar.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));		
+		JMenu file = new JMenu("File");
 		menuItem = new JMenuItem(new AbstractAction("New"){
 			private static final long serialVersionUID = 1L;
 
@@ -215,6 +211,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 				}
 			}
 		});
+		
 		file.add(menuItem);
 		file.addSeparator();
 		
@@ -227,8 +224,21 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 				dispose();
 			}
 		});
-		file.add(menuItem);
 		
+		file.add(menuItem);
+		bar.add(file);
+		file = new JMenu("Utilities");
+		menuItem = new JMenuItem(new AbstractAction("Find"){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		file.add(menuItem);
+		bar.add(file);
 		return bar;
 	}
 	
@@ -242,8 +252,6 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 		panel.setPreferredSize(dim);
 		
 		textarea = new JTextArea();
-		textarea.setLineWrap( true );
-		textarea.setWrapStyleWord( true );
 		textarea.setSize(dim);
 		textarea.setEditable(true);
 		panel.add(textarea);
