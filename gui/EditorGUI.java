@@ -1,12 +1,10 @@
 package gui;
 
-import java.awt.ComponentOrientation;
+
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,8 +13,8 @@ import java.io.IOException;
 import java.io.File;
 
 import javax.swing.AbstractAction;
-import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -25,6 +23,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 
 public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionListener{
@@ -34,6 +33,14 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	
 	private static final int DEFAULT_HEIGHT = 650;
 	
+	private static final int SEARCH_HEIGHT = 150;
+
+	private static final int SEARCH_WIDTH = 400;
+	
+	private static final int BUTTON_WIDTH = JButton.WIDTH;
+	
+	private static final int BUTTON_HEIGHT = JButton.HEIGHT;
+
 	private int width;
 	
 	private int height;
@@ -46,6 +53,10 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	
 	private String path;
 	
+	private JButton find;
+
+	private JTextField searchItem;
+
 	/**
 	 * Creates a new Editor GUI with the specified title
 	 * @param title The title of the GUI super class JFrame
@@ -156,7 +167,6 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 					FileWriter fw;
 					try {
 						fw = new FileWriter(fc.getSelectedFile());
-						File file = fc.getSelectedFile();
 						String text = textarea.getText();
 						fw.write(text);
 						fw.close();
@@ -228,18 +238,54 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 		file.add(menuItem);
 		bar.add(file);
 		file = new JMenu("Utilities");
-		menuItem = new JMenuItem(new AbstractAction("Find"){
+		menuItem = new JMenuItem(new AbstractAction("Search"){
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				JFrame search = new JFrame("Search");
+				search.setSize(SEARCH_WIDTH, SEARCH_HEIGHT);
+				search.setLayout(new BoxLayout(search.getContentPane(), BoxLayout.Y_AXIS));
+
+				search.getContentPane().add(addSearchBar());
+				search.getContentPane().add(addFindButton());
+				search.setVisible(true);
 			}
 		});
 		file.add(menuItem);
 		bar.add(file);
 		return bar;
+	}
+	
+	private JPanel addFindButton(){
+		JPanel pnl = new JPanel();
+		setSize(this.getWidth(), this.getHeight());
+
+		pnl.add(findButton());
+		return pnl;
+	}
+	
+	private JPanel addSearchBar(){
+		JPanel pnl = new JPanel();
+		setSize(this.getWidth(), this.getHeight());
+		pnl.add(searchBar());
+		return pnl;
+	}
+	
+	private JTextField searchBar(){
+		searchItem = new JTextField(20);
+		
+		return searchItem;
+	}
+	
+	private JButton findButton(){
+		find = new JButton("Search");
+		Dimension dim = new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT);
+		
+		find.setMaximumSize(dim);
+		find.setMinimumSize(dim);
+		find.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+		return find;
 	}
 	
 	/**
