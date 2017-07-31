@@ -56,6 +56,8 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	private JButton find;
 
 	private JTextField searchItem;
+	
+	private JFileChooser fc;
 
 	/**
 	 * Creates a new Editor GUI with the specified title
@@ -65,6 +67,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 		super(title);
 		this.setWidth(DEFAULT_WIDTH);
 		this.setHeight(DEFAULT_HEIGHT);
+		path = null;
 	}
 	
 	/**
@@ -100,7 +103,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	}
 	
 	private void changeTitle(String filePath){
-		this.setTitle(filePath);
+		this.setTitle("Jason\'s Text Editor - " + filePath);
 	}
 
 	/**
@@ -150,6 +153,8 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				textarea.setText(null);
+				path = null;
+				changeTitle("");
 			}
 		});
 		file.add(menuItem);
@@ -159,16 +164,32 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				final JFrame frame = new JFrame();
-				int returnVal = fc.showSaveDialog(frame);
-				
-				if(returnVal == JFileChooser.APPROVE_OPTION){
+				if(path.equals(null)){
+					final JFrame frame = new JFrame();
+					int returnVal = fc.showSaveDialog(frame);
+					
+					if(returnVal == JFileChooser.APPROVE_OPTION){
+						FileWriter fw;
+						try {
+							fw = new FileWriter(fc.getSelectedFile());
+							String text = textarea.getText();
+							fw.write(text);
+							File file = fc.getSelectedFile();
+							changeTitle(file.getPath());
+							fw.close();
+						} catch (IOException e1) {
+							System.out.println("Cannot write file.");
+						}
+					}
+				}
+				else{
 					FileWriter fw;
 					try {
 						fw = new FileWriter(fc.getSelectedFile());
 						String text = textarea.getText();
 						fw.write(text);
+						File file = fc.getSelectedFile();
+						changeTitle(file.getPath());
 						fw.close();
 					} catch (IOException e1) {
 						System.out.println("Cannot write file.");
@@ -183,7 +204,23 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				fc = new JFileChooser();
+				final JFrame frame = new JFrame();
+				int returnVal = fc.showSaveDialog(frame);
 				
+				if(returnVal == JFileChooser.APPROVE_OPTION){
+					FileWriter fw;
+					try {
+						fw = new FileWriter(fc.getSelectedFile());
+						String text = textarea.getText();
+						fw.write(text);
+						File file = fc.getSelectedFile();
+						changeTitle(file.getPath());
+						fw.close();
+					} catch (IOException e1) {
+						System.out.println("Cannot write file.");
+					}
+				}
 			}
 		});
 		file.add(menuItem);
@@ -193,7 +230,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
+				fc = new JFileChooser();
 				final JFrame frame = new JFrame();
 				int returnVal = fc.showOpenDialog(frame);
 				
