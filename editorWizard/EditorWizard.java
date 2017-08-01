@@ -11,6 +11,6 @@ public class EditorWizard {
 	}
 	
 	public static void main(String[] args){
-		SwingUtilities.invokeLater(new EditorGUI("Text Editor"));
+		SwingUtilities.invokeLater(new EditorGUI("Jason\'s Text Editor"));
 	}
 }

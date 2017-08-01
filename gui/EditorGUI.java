@@ -1,11 +1,11 @@
 package gui;
 
+
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,6 +15,7 @@ import java.io.File;
 
 import javax.swing.AbstractAction;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -23,9 +24,13 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
+import javax.swing.text.Highlighter.HighlightPainter;
 
+import java.awt.color.*;
 
-import java.util.*;
 
 public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionListener{
 	private static final long serialVersionUID = -5259510942170843475L;
@@ -34,6 +39,14 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	
 	private static final int DEFAULT_HEIGHT = 650;
 	
+	private static final int SEARCH_HEIGHT = 150;
+
+	private static final int SEARCH_WIDTH = 400;
+	
+	private static final int BUTTON_WIDTH = JButton.WIDTH;
+	
+	private static final int BUTTON_HEIGHT = JButton.HEIGHT;
+
 	private int width;
 	
 	private int height;
@@ -41,13 +54,17 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	private JTextArea textarea;
 	
 	private JScrollPane vertical;
-	
-	private JMenu file;
-	
+		
 	private JMenuItem menuItem;
 	
 	private String path;
 	
+	private JButton find;
+
+	private JTextField searchItem;
+	
+	private JFileChooser fc;
+
 	/**
 	 * Creates a new Editor GUI with the specified title
 	 * @param title The title of the GUI super class JFrame
@@ -56,6 +73,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 		super(title);
 		this.setWidth(DEFAULT_WIDTH);
 		this.setHeight(DEFAULT_HEIGHT);
+		path = null;
 	}
 	
 	/**
@@ -91,7 +109,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	}
 	
 	private void changeTitle(String filePath){
-		this.setTitle(filePath);
+		this.setTitle("Jason\'s Text Editor - " + filePath);
 	}
 
 	/**
@@ -100,7 +118,6 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -117,9 +134,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	 */
 	public void createGUI(){
 		setSize(this.getWidth(), this.getHeight());
-		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
 		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		this.getContentPane().add(addMenu());
 		this.getContentPane().add(addContent());
@@ -133,18 +148,16 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	 */
 	public JMenuBar addMenu(){
 		JMenuBar bar = new JMenuBar();
-		
-		file = new JMenu("File");
-		file.setMnemonic(KeyEvent.VK_A);
-		file.getAccessibleContext().setAccessibleDescription("Save");
-		bar.add(file);
-		
+		bar.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));		
+		JMenu file = new JMenu("File");
 		menuItem = new JMenuItem(new AbstractAction("New"){
 			private static final long serialVersionUID = 1L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				textarea.setText(null);
+				path = null;
+				changeTitle("");
 			}
 		});
 		file.add(menuItem);
@@ -154,17 +167,32 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
-				final JFrame frame = new JFrame();
-				int returnVal = fc.showSaveDialog(frame);
-				
-				if(returnVal == JFileChooser.APPROVE_OPTION){
+				if(path.equals(null)){
+					final JFrame frame = new JFrame();
+					int returnVal = fc.showSaveDialog(frame);
+					
+					if(returnVal == JFileChooser.APPROVE_OPTION){
+						FileWriter fw;
+						try {
+							fw = new FileWriter(fc.getSelectedFile());
+							String text = textarea.getText();
+							fw.write(text);
+							File file = fc.getSelectedFile();
+							changeTitle(file.getPath());
+							fw.close();
+						} catch (IOException e1) {
+							System.out.println("Cannot write file.");
+						}
+					}
+				}
+				else{
 					FileWriter fw;
 					try {
 						fw = new FileWriter(fc.getSelectedFile());
-						File file = fc.getSelectedFile();
 						String text = textarea.getText();
 						fw.write(text);
+						File file = fc.getSelectedFile();
+						changeTitle(file.getPath());
 						fw.close();
 					} catch (IOException e1) {
 						System.out.println("Cannot write file.");
@@ -179,7 +207,23 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				fc = new JFileChooser();
+				final JFrame frame = new JFrame();
+				int returnVal = fc.showSaveDialog(frame);
 				
+				if(returnVal == JFileChooser.APPROVE_OPTION){
+					FileWriter fw;
+					try {
+						fw = new FileWriter(fc.getSelectedFile());
+						String text = textarea.getText();
+						fw.write(text);
+						File file = fc.getSelectedFile();
+						changeTitle(file.getPath());
+						fw.close();
+					} catch (IOException e1) {
+						System.out.println("Cannot write file.");
+					}
+				}
 			}
 		});
 		file.add(menuItem);
@@ -189,7 +233,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser();
+				fc = new JFileChooser();
 				final JFrame frame = new JFrame();
 				int returnVal = fc.showOpenDialog(frame);
 				
@@ -217,6 +261,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 				}
 			}
 		});
+		
 		file.add(menuItem);
 		file.addSeparator();
 		
@@ -229,9 +274,80 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 				dispose();
 			}
 		});
-		file.add(menuItem);
 		
+		file.add(menuItem);
+		bar.add(file);
+		file = new JMenu("Utilities");
+		menuItem = new JMenuItem(new AbstractAction("Search"){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFrame search = new JFrame("Search");
+				search.setSize(SEARCH_WIDTH, SEARCH_HEIGHT);
+				search.setLayout(new BoxLayout(search.getContentPane(), BoxLayout.Y_AXIS));
+
+				search.getContentPane().add(addSearchBar());
+				search.getContentPane().add(addFindButton());
+				search.setVisible(true);
+				find.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						if(searchItem.getText().compareTo("") != 0){
+							Highlighter highlighter = textarea.getHighlighter();
+							HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
+							
+							String item = searchItem.getText();
+							
+							int lastIndex = 0;
+							int count = 0;
+							while(lastIndex != -1){
+								lastIndex = textarea.getText().indexOf(item, lastIndex);
+								if(lastIndex != -1){
+									count++;
+									lastIndex += item.length();
+								}
+							}
+							System.out.println("There were " + count + " matches.");
+							
+						}
+					}
+				});
+			}
+		});
+		file.add(menuItem);
+		bar.add(file);
 		return bar;
+	}
+	
+	private JPanel addFindButton(){
+		JPanel pnl = new JPanel();
+		setSize(this.getWidth(), this.getHeight());
+
+		pnl.add(findButton());
+		return pnl;
+	}
+	
+	private JPanel addSearchBar(){
+		JPanel pnl = new JPanel();
+		setSize(this.getWidth(), this.getHeight());
+		pnl.add(searchBar());
+		return pnl;
+	}
+	
+	private JTextField searchBar(){
+		searchItem = new JTextField(20);
+		
+		return searchItem;
+	}
+	
+	private JButton findButton(){
+		find = new JButton("Search");
+		Dimension dim = new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT);
+		find.setMaximumSize(dim);
+		find.setMinimumSize(dim);
+		find.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
+		return find;
 	}
 	
 	/**
@@ -244,8 +360,6 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 		panel.setPreferredSize(dim);
 		
 		textarea = new JTextArea();
-		textarea.setLineWrap( true );
-		textarea.setWrapStyleWord( true );
 		textarea.setSize(dim);
 		textarea.setEditable(true);
 		panel.add(textarea);
