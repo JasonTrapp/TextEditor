@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
@@ -291,23 +292,34 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 				find.addActionListener(new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
+						Highlighter highlighter = textarea.getHighlighter();
+						HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
+						HighlightPainter repaint = new DefaultHighlighter.DefaultHighlightPainter(Color.WHITE);
+						
 						if(searchItem.getText().compareTo("") != 0){
-							Highlighter highlighter = textarea.getHighlighter();
-							HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
 							
 							String item = searchItem.getText();
-							
 							int lastIndex = 0;
 							int count = 0;
+							
 							while(lastIndex != -1){
+								System.out.println("test");
 								lastIndex = textarea.getText().indexOf(item, lastIndex);
+								int p1 = lastIndex + item.length();
+								
 								if(lastIndex != -1){
+									try {
+										highlighter.addHighlight(lastIndex, p1, painter);
+									} catch (BadLocationException e) {
+										System.out.println("failed");
+									}
 									count++;
+									if((lastIndex + item.length()) > textarea.getText().length())
+										break;
 									lastIndex += item.length();
 								}
 							}
 							System.out.println("There were " + count + " matches.");
-							
 						}
 					}
 				});
