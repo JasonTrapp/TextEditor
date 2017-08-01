@@ -1,6 +1,7 @@
 package gui;
 
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -24,6 +25,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
+import javax.swing.text.Highlighter.HighlightPainter;
 
 
 public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionListener{
@@ -112,7 +116,6 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -129,9 +132,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	 */
 	public void createGUI(){
 		setSize(this.getWidth(), this.getHeight());
-		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
 		setLayout(new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		this.getContentPane().add(addMenu());
 		this.getContentPane().add(addContent());
@@ -287,6 +288,29 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 				search.getContentPane().add(addSearchBar());
 				search.getContentPane().add(addFindButton());
 				search.setVisible(true);
+				find.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						if(searchItem.getText().compareTo("") != 0){
+							Highlighter highlighter = textarea.getHighlighter();
+							HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
+							
+							String item = searchItem.getText();
+							
+							int lastIndex = 0;
+							int count = 0;
+							while(lastIndex != -1){
+								lastIndex = textarea.getText().indexOf(item, lastIndex);
+								if(lastIndex != -1){
+									count++;
+									lastIndex += item.length();
+								}
+							}
+							System.out.println("There were " + count + " matches.");
+							
+						}
+					}
+				});
 			}
 		});
 		file.add(menuItem);
@@ -318,7 +342,6 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 	private JButton findButton(){
 		find = new JButton("Search");
 		Dimension dim = new Dimension(BUTTON_WIDTH, BUTTON_HEIGHT);
-		
 		find.setMaximumSize(dim);
 		find.setMinimumSize(dim);
 		find.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
