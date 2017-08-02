@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -289,12 +291,19 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 				search.getContentPane().add(addSearchBar());
 				search.getContentPane().add(addFindButton());
 				search.setVisible(true);
+				Highlighter highlighter = textarea.getHighlighter();
+
+				search.addWindowListener(new WindowAdapter(){
+					@Override
+					public void windowClosing(WindowEvent windowEvent){
+					highlighter.removeAllHighlights();
+					}
+				});
+				
 				find.addActionListener(new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
-						Highlighter highlighter = textarea.getHighlighter();
 						HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
-						HighlightPainter repaint = new DefaultHighlighter.DefaultHighlightPainter(Color.WHITE);
 						
 						if(searchItem.getText().compareTo("") != 0){
 							
@@ -320,6 +329,9 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 								}
 							}
 							System.out.println("There were " + count + " matches.");
+						}
+						else{
+							highlighter.removeAllHighlights();
 						}
 					}
 				});
