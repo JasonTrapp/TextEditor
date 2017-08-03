@@ -20,6 +20,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -296,7 +297,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 				search.addWindowListener(new WindowAdapter(){
 					@Override
 					public void windowClosing(WindowEvent windowEvent){
-					highlighter.removeAllHighlights();
+						highlighter.removeAllHighlights();
 					}
 				});
 				
@@ -312,7 +313,6 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 							int count = 0;
 							
 							while(lastIndex != -1){
-								System.out.println("test");
 								lastIndex = textarea.getText().indexOf(item, lastIndex);
 								int p1 = lastIndex + item.length();
 								
@@ -327,8 +327,9 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 										break;
 									lastIndex += item.length();
 								}
-							}
-							System.out.println("There were " + count + " matches.");
+							}							
+							search.getContentPane().add(results(count));
+							search.getContentPane().validate();
 						}
 						else{
 							highlighter.removeAllHighlights();
@@ -370,6 +371,14 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 		find.setMinimumSize(dim);
 		find.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
 		return find;
+	}
+	
+	private JLabel results(int count){
+		JLabel holder = new JLabel();
+		
+		holder.setText("There were " + count + " matches");
+		
+		return holder;
 	}
 	
 	/**
