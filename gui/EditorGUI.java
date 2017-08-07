@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,6 +20,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -25,11 +28,18 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+<<<<<<< HEAD
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 import javax.swing.text.Highlighter.HighlightPainter;
 
 import java.awt.color.*;
+=======
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
+import javax.swing.text.Highlighter.HighlightPainter;
+>>>>>>> dev
 
 
 public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionListener{
@@ -290,6 +300,7 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 				search.getContentPane().add(addSearchBar());
 				search.getContentPane().add(addFindButton());
 				search.setVisible(true);
+<<<<<<< HEAD
 				find.addActionListener(new ActionListener(){
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
@@ -310,6 +321,49 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 							}
 							System.out.println("There were " + count + " matches.");
 							
+=======
+				Highlighter highlighter = textarea.getHighlighter();
+
+				search.addWindowListener(new WindowAdapter(){
+					@Override
+					public void windowClosing(WindowEvent windowEvent){
+						highlighter.removeAllHighlights();
+					}
+				});
+				
+				find.addActionListener(new ActionListener(){
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.yellow);
+						
+						if(searchItem.getText().compareTo("") != 0){
+							
+							String item = searchItem.getText();
+							int lastIndex = 0;
+							int count = 0;
+							
+							while(lastIndex != -1){
+								lastIndex = textarea.getText().indexOf(item, lastIndex);
+								int p1 = lastIndex + item.length();
+								
+								if(lastIndex != -1){
+									try {
+										highlighter.addHighlight(lastIndex, p1, painter);
+									} catch (BadLocationException e) {
+										System.out.println("failed");
+									}
+									count++;
+									if((lastIndex + item.length()) > textarea.getText().length())
+										break;
+									lastIndex += item.length();
+								}
+							}							
+							search.getContentPane().add(results(count));
+							search.getContentPane().validate();
+						}
+						else{
+							highlighter.removeAllHighlights();
+>>>>>>> dev
 						}
 					}
 				});
@@ -348,6 +402,14 @@ public class EditorGUI extends javax.swing.JFrame implements Runnable, ActionLis
 		find.setMinimumSize(dim);
 		find.setSize(BUTTON_WIDTH, BUTTON_HEIGHT);
 		return find;
+	}
+	
+	private JLabel results(int count){
+		JLabel holder = new JLabel();
+		
+		holder.setText("There were " + count + " matches");
+		
+		return holder;
 	}
 	
 	/**
